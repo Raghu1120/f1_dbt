@@ -1,0 +1,67 @@
+version: 2
+
+models:
+
+  - name: dim_drivers
+    description: "Driver dimension table"
+
+    columns:
+      - name: driver_id
+        tests:
+          - not_null
+          - unique
+
+      - name: full_name
+        description: "Driver full name"
+
+  - name: dim_constructors
+    description: "Constructor dimension table"
+
+    columns:
+      - name: constructor_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_circuits
+    description: "Circuit dimension table"
+
+    columns:
+      - name: circuit_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_races
+    description: "Race dimension table enriched with circuit info"
+
+    columns:
+      - name: race_id
+        tests:
+          - not_null
+          - unique
+
+      - name: circuit_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_circuits')
+                field: circuit_id
+
+  - name: dim_status
+    description: "Race status lookup table"
+
+    columns:
+      - name: status_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_seasons
+    description: "Season dimension table"
+
+    columns:
+      - name: season_year
+        tests:
+          - not_null
+          - unique

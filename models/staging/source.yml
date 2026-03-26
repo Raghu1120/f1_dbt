@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: raw
+    database: F1_DB
+    schema: RAW
+
+    tables:
+      - name: drivers
+      - name: races
+      - name: circuits
+      - name: constructors
+      - name: results
+      - name: lap_times
+      - name: pit_stops
+      - name: qualifying
+      - name: seasons
+      - name: status
+      - name: constructor_results
+      - name: constructor_standings
+      - name: driver_standings
+      - name: sprint_results

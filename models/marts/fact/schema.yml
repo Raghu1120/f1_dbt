@@ -1,0 +1,193 @@
+version: 2
+
+models:
+  - name: fact_results
+    description: >
+      Fact table containing race-level performance for each driver.
+      Grain: one row per driver per race.
+
+    columns:
+
+      - name: result_id
+        description: Unique identifier for each race result
+        tests: [not_null, unique]
+
+      - name: race_id
+        description: Foreign key to races
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_races')
+                field: race_id
+
+      - name: driver_id
+        description: Foreign key to drivers
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_drivers')
+                field: driver_id
+
+      - name: constructor_id
+        description: Foreign key to constructors
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_constructors')
+                field: constructor_id
+
+      - name: status_id
+        description: Foreign key to race status
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_status')
+                field: status_id
+
+      - name: points
+        description: "Points scored in race (old F1 system: 10, 8, 6...)"
+
+      - name: position
+        description: Final race finishing position
+
+      - name: qualifying_position
+        description: Position achieved in qualifying session
+
+      - name: grid
+        description: Starting grid position
+
+      - name: laps
+        description: Number of laps completed
+
+      - name: milliseconds
+        description: Total race time in milliseconds
+
+      - name: avg_lap_time_ms
+        description: Average lap time
+
+      - name: lap_fastest_ms
+        description: Fastest lap time in race
+
+      - name: total_pit_stops
+        description: Number of pit stops
+
+      - name: total_pit_duration_ms
+        description: Total pit stop duration
+
+      - name: q1_time
+        description: Qualifying Q1 lap time
+
+      - name: q2_time
+        description: Qualifying Q2 lap time
+
+      - name: q3_time
+        description: Qualifying Q3 lap time
+
+      - name: race_status
+        description: Race completion status
+
+      - name: is_win
+        tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+
+      - name: is_podium
+        tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+
+      - name: is_dnf
+        tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+
+
+
+
+
+  - name: fact_sprint_results
+    description: >
+      Fact table containing sprint race performance for each driver.
+      Grain: one row per driver per sprint race.
+
+    columns:
+
+      - name: result_id
+        description: Unique sprint result ID
+        tests: [not_null, unique]
+
+      - name: race_id
+        description: Foreign key to races
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_races')
+                field: race_id
+
+      - name: driver_id
+        description: Foreign key to drivers
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_drivers')
+                field: driver_id
+
+      - name: constructor_id
+        description: Foreign key to constructors
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_constructors')
+                field: constructor_id
+
+      - name: status_id
+        description: Foreign key to race status
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_status')
+                field: status_id
+
+      - name: finish_position
+        description: Final finishing position in sprint
+
+      - name: points
+        description: "Points scored in sprint (F1 sprint scoring system)"
+
+      - name: laps
+        description: Number of laps completed
+
+      - name: race_time_ms
+        description: Sprint race time in milliseconds
+
+      - name: fastestlap
+        description: Fastest lap number
+
+      - name: fastest_lap_time
+        description: Fastest lap time
+
+      - name: race_status
+        description: Sprint race status
+
+      - name: is_win
+        tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+
+      - name: is_podium
+        tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+
+      - name: is_dnf
+        tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]

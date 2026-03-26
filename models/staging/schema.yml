@@ -1,0 +1,376 @@
+version: 2
+
+models:
+  - name: stg_drivers
+    columns:
+      - name: driver_id
+        tests:
+          - not_null
+          - unique
+
+      - name: first_name
+        tests:
+          - not_null
+
+      - name: last_name
+        tests:
+          - not_null
+    
+  - name: stg_circuits
+    description: "Staging model for circuits data"
+
+    columns:
+      - name: circuit_id
+        description: "Primary key for circuits"
+        tests:
+          - not_null
+          - unique
+
+      - name: circuit_ref
+        description: "Unique circuit reference"
+        tests:
+          - not_null
+
+      - name: circuit_name
+        description: "Name of the circuit"
+        tests:
+          - not_null
+
+      - name: country
+        description: "Country where circuit is located"
+        tests:
+          - not_null
+
+      - name: latitude
+        description: "Latitude of circuit"
+
+      - name: longitude
+        description: "Longitude of circuit"
+
+      - name: altitude
+        description: "Altitude of circuit"
+
+  
+  - name: stg_constructors
+    description: "Staging model for constructors"
+
+    columns:
+      - name: constructor_id
+        tests:
+          - not_null
+          - unique
+
+      - name: constructor_ref
+        tests:
+          - not_null
+
+      - name: constructor_name
+        tests:
+          - not_null
+
+      - name: nationality
+
+  
+  - name: stg_constructor_results
+    description: "Staging model for constructor race results"
+
+    columns:
+      - name: constructor_results_id
+        tests:
+          - not_null
+          - unique
+
+      - name: race_id
+        tests:
+          - not_null
+
+      - name: constructor_id
+        tests:
+          - not_null
+
+      - name: points
+
+      - name: status
+
+
+
+
+  - name: stg_constructor_standings
+    description: "Constructor standings per race"
+
+    columns:
+      - name: constructor_standings_id
+        tests:
+          - not_null
+          - unique
+
+      - name: race_id
+        tests:
+          - not_null
+
+      - name: constructor_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_constructors')
+                field: constructor_id
+
+      - name: position
+      - name: points
+      - name: wins
+  
+
+  - name: stg_driver_standings
+    description: "Driver standings per race"
+
+    columns:
+      - name: driver_standings_id
+        tests:
+          - not_null
+          - unique
+
+      - name: race_id
+        tests:
+          - not_null
+
+      - name: driver_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_drivers')
+                field: driver_id
+
+      - name: position
+      - name: points
+      - name: wins
+
+
+  - name: stg_qualifying
+    description: "Qualifying session results"
+
+    columns:
+    - name: qualify_id
+      tests:
+        - not_null
+        - unique
+
+    - name: race_id
+      tests:
+        - not_null
+
+    - name: driver_id
+      tests:
+        - not_null
+
+    - name: constructor_id
+      tests:
+        - not_null
+
+
+
+  - name: stg_pit_stops
+    description: "Pit stop events"
+
+    columns:
+    - name: race_id
+      tests:
+        - not_null
+
+    - name: driver_id
+      tests:
+        - not_null
+
+    - name: stop
+      tests:
+        - not_null
+
+    - name: pit_duration_ms
+
+
+
+  - name: stg_lap_times
+    description: "Lap level timing data"
+
+    columns:
+    - name: race_id
+      tests:
+        - not_null
+
+    - name: driver_id
+      tests:
+        - not_null
+
+    - name: lap
+      tests:
+        - not_null
+
+    - name: lap_time_ms
+      tests:
+        - not_null
+
+
+  - name: stg_races
+    description: "Staging model for races data"
+
+    columns:
+    - name: race_id
+      tests:
+        - not_null
+        - unique
+
+    - name: year
+      tests:
+        - not_null
+
+    - name: round
+      tests:
+        - not_null
+
+    - name: circuit_id
+      tests:
+        - not_null
+        - relationships:
+            to: ref('stg_circuits')
+            field: circuit_id
+
+    - name: race_date
+
+    - name: race_datetime
+
+  - name: stg_results
+    description: "Race results for each driver"
+
+    columns:
+    - name: result_id
+      tests:
+        - not_null
+        - unique
+
+    - name: race_id
+      tests:
+        - not_null
+        - relationships:
+            to: ref('stg_races')
+            field: race_id
+
+    - name: driver_id
+      tests:
+        - not_null
+        - relationships:
+            to: ref('stg_drivers')
+            field: driver_id
+
+    - name: constructor_id
+      tests:
+        - not_null
+        - relationships:
+            to: ref('stg_constructors')
+            field: constructor_id
+
+    - name: finish_position
+
+    - name: points
+
+    - name: race_time_ms
+
+
+  - name: stg_seasons
+    description: "Cleaned seasons data from raw layer"
+
+    columns:
+      - name: season_year
+        tests:
+          - not_null
+          - unique
+
+      - name: season_url
+
+
+  - name: stg_sprint_results
+    description: "Staging model for sprint race results with cleaned data and corrected points logic"
+
+    columns:
+      - name: result_id
+        description: "Unique identifier for each sprint result"
+        tests:
+          - not_null
+          - unique
+
+      - name: race_id
+        description: "Foreign key to races table"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_races')
+                field: race_id
+
+      - name: driver_id
+        description: "Foreign key to drivers table"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_drivers')
+                field: driver_id
+
+      - name: constructor_id
+        description: "Foreign key to constructors table"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_constructors')
+                field: constructor_id
+
+      - name: number
+        description: "Car number"
+
+      - name: grid
+        description: "Starting grid position"
+
+      - name: finish_position
+        description: "Final position of driver in sprint race"
+
+      - name: points
+        description: "Sprint points calculated based on finish position"
+
+      - name: laps
+        description: "Number of laps completed"
+
+      - name: race_time
+        description: "Total race time"
+
+      - name: race_time_ms
+        description: "Race time in milliseconds"
+
+      - name: fastestlap
+        description: "Fastest lap number"
+
+      - name: fastest_lap_time
+        description: "Fastest lap time"
+
+      - name: status_id
+        description: "Status of race result"
+        tests:
+          - not_null
+
+
+
+
+  - name: stg_status
+    description: "Staging model for race status codes"
+
+    columns:
+      - name: status_id
+        description: "Unique identifier for race status"
+        tests:
+          - not_null
+          - unique
+
+      - name: status
+        description: "Description of race status (e.g., Finished, Disqualified, etc.)"
+        tests:
+          - not_null
